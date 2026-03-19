@@ -1,0 +1,87 @@
+job started: Tue Mar 17 12:11:39 PM EDT 2026
+job id: 2415465
+hostname: kn113
+pwd before cd: /home/pirie03/projects/aip-medilab/pirie03/NeedleMicroSeg/scripts/slurm
+pwd after cd: /home/pirie03/projects/aip-medilab/pirie03/NeedleMicroSeg
+activating venv: Tue Mar 17 12:11:39 PM EDT 2026
+venv activated: Tue Mar 17 12:11:39 PM EDT 2026
+Run dir: runs_2d/full_frame_resize_test_2415465
+Device: cuda
+GPU: NVIDIA L40S
+Train config: /home/pirie03/projects/aip-medilab/pirie03/NeedleMicroSeg/configs/full_frame_resize_test.yaml
+Split ID: kfold_cv_fold-0
+Extractor: full_frame_resize
+Train samples: 1345 | Val samples: 354
+[Epoch 1] step 1/250 | train_total_loss=1.9884
+[Epoch 1] step 50/250 | train_total_loss=1.7292
+[Epoch 1] step 100/250 | train_total_loss=1.5156
+[Epoch 1] step 150/250 | train_total_loss=1.3964
+[Epoch 1] step 200/250 | train_total_loss=1.3223
+[Epoch 1] step 250/250 | train_total_loss=1.2572
+[Epoch 1] time_sec=8.1 train_loss=1.4452 val_loss=1.2386 val_dice=0.3588
+[Epoch 2] step 1/250 | train_total_loss=1.2659
+[Epoch 2] step 50/250 | train_total_loss=1.2083
+[Epoch 2] step 100/250 | train_total_loss=1.1587
+[Epoch 2] step 150/250 | train_total_loss=1.1146
+[Epoch 2] step 200/250 | train_total_loss=1.0702
+[Epoch 2] step 250/250 | train_total_loss=1.0350
+[Epoch 2] time_sec=6.5 train_loss=1.1176 val_loss=1.0252 val_dice=0.6566
+[Epoch 3] step 1/250 | train_total_loss=1.0160
+[Epoch 3] step 50/250 | train_total_loss=0.9931
+[Epoch 3] step 100/250 | train_total_loss=0.9576
+[Epoch 3] step 150/250 | train_total_loss=0.9242
+[Epoch 3] step 200/250 | train_total_loss=0.8912
+[Epoch 3] step 250/250 | train_total_loss=0.8592
+[Epoch 3] time_sec=6.8 train_loss=0.9252 val_loss=0.8619 val_dice=0.6976
+[Epoch 4] step 1/250 | train_total_loss=0.8342
+[Epoch 4] step 50/250 | train_total_loss=0.8199
+[Epoch 4] step 100/250 | train_total_loss=0.7879
+[Epoch 4] step 150/250 | train_total_loss=0.7685
+[Epoch 4] step 200/250 | train_total_loss=0.7208
+[Epoch 4] step 250/250 | train_total_loss=0.6848
+[Epoch 4] time_sec=6.7 train_loss=0.7564 val_loss=0.7170 val_dice=0.7125
+[Epoch 5] step 1/250 | train_total_loss=0.6618
+[Epoch 5] step 50/250 | train_total_loss=0.6530
+[Epoch 5] step 100/250 | train_total_loss=0.6227
+[Epoch 5] step 150/250 | train_total_loss=0.6029
+[Epoch 5] step 200/250 | train_total_loss=0.5620
+[Epoch 5] step 250/250 | train_total_loss=0.5338
+[Epoch 5] time_sec=6.8 train_loss=0.5949 val_loss=0.5911 val_dice=0.7186
+[Epoch 6] step 1/250 | train_total_loss=0.5001
+[Epoch 6] step 50/250 | train_total_loss=0.4913
+[Epoch 6] step 100/250 | train_total_loss=0.4830
+[Epoch 6] step 150/250 | train_total_loss=0.4681
+[Epoch 6] step 200/250 | train_total_loss=0.4259
+[Epoch 6] step 250/250 | train_total_loss=0.4037
+[Epoch 6] time_sec=6.8 train_loss=0.4544 val_loss=0.5001 val_dice=0.7257
+[Epoch 7] step 1/250 | train_total_loss=0.4012
+[Epoch 7] step 50/250 | train_total_loss=0.3807
+[Epoch 7] step 100/250 | train_total_loss=0.3725
+[Epoch 7] step 150/250 | train_total_loss=0.3628
+[Epoch 7] step 200/250 | train_total_loss=0.3417
+[Epoch 7] step 250/250 | train_total_loss=0.3149
+[Epoch 7] time_sec=6.8 train_loss=0.3546 val_loss=0.4517 val_dice=0.7230
+[Epoch 8] step 1/250 | train_total_loss=0.2829
+[Epoch 8] step 50/250 | train_total_loss=0.2999
+[Epoch 8] step 100/250 | train_total_loss=0.2873
+[Epoch 8] step 150/250 | train_total_loss=0.2878
+[Epoch 8] step 200/250 | train_total_loss=0.2587
+[Epoch 8] step 250/250 | train_total_loss=0.2546
+[Epoch 8] time_sec=6.7 train_loss=0.2776 val_loss=0.4429 val_dice=0.7079
+[Epoch 9] step 1/250 | train_total_loss=0.3037
+[Epoch 9] step 50/250 | train_total_loss=0.2452
+[Epoch 9] step 100/250 | train_total_loss=0.2331
+[Epoch 9] step 150/250 | train_total_loss=0.2241
+[Epoch 9] step 200/250 | train_total_loss=0.2132
+[Epoch 9] step 250/250 | train_total_loss=0.1999
+[Epoch 9] time_sec=6.8 train_loss=0.2233 val_loss=0.4252 val_dice=0.7074
+[Epoch 10] step 1/250 | train_total_loss=0.1835
+[Epoch 10] step 50/250 | train_total_loss=0.1872
+[Epoch 10] step 100/250 | train_total_loss=0.1837
+[Epoch 10] step 150/250 | train_total_loss=0.1844
+[Epoch 10] step 200/250 | train_total_loss=0.1740
+[Epoch 10] step 250/250 | train_total_loss=0.1584
+[Epoch 10] time_sec=6.9 train_loss=0.1775 val_loss=0.4244 val_dice=0.7014
+Training completed.
+Loaded best checkpoint for validation panel.
+job finished: Tue Mar 17 12:14:23 PM EDT 2026

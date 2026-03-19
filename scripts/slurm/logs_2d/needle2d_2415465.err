@@ -1,0 +1,11 @@
+/project/6106383/pirie03/NeedleMicroSeg/src/train/trainer_2d.py:53: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=use_amp):
+Traceback (most recent call last):
+  File "/project/6106383/pirie03/NeedleMicroSeg/scripts/run_train_2d.py", line 397, in <module>
+    main()
+  File "/project/6106383/pirie03/NeedleMicroSeg/scripts/run_train_2d.py", line 387, in main
+    save_val_panels(
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+TypeError: save_val_panels() got an unexpected keyword argument 'save_path'
