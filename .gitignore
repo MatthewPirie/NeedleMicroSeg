@@ -1,5 +1,6 @@
 # Training outputs
 runs_2d/
+runs_3d/
 
 # SLURM logs
 scripts/slurm/logs_2d/
