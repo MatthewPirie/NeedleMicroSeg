@@ -68,6 +68,32 @@ class CompoundBCEDiceLoss(nn.Module):
 
 
 @torch.no_grad()
+def soft_dice_score(
+    logits: torch.Tensor,
+    targets: torch.Tensor,
+    eps: float = 1e-6,
+    batch_dice: bool = False,
+) -> torch.Tensor:
+    probs = torch.sigmoid(logits)
+    probs = probs.contiguous()
+    targets = targets.contiguous()
+
+    if batch_dice:
+        inter = (probs * targets).sum()
+        denom = probs.sum() + targets.sum()
+        return (2.0 * inter + eps) / (denom + eps)
+
+    b = probs.shape[0]
+    probs = probs.view(b, -1)
+    targets = targets.view(b, -1)
+
+    inter = (probs * targets).sum(dim=1)
+    denom = probs.sum(dim=1) + targets.sum(dim=1)
+    dice = (2.0 * inter + eps) / (denom + eps)
+    return dice.mean()
+
+
+@torch.no_grad()
 def hard_dice_score(
     logits: torch.Tensor,
     targets: torch.Tensor,

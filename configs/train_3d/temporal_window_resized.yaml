@@ -1,0 +1,33 @@
+extractor:
+  name: temporal_window
+  kwargs:
+    z_window: 10
+    out_hw: [256, 256]
+
+normalization:
+  name: zscore_per_image
+
+augmentations:
+  enabled: []
+  kwargs: {}
+
+data:
+  split_id: kfold_cv_fold-0
+
+train:
+  batch_size: 4
+  epochs: 150
+  steps_per_epoch: 250
+  log_every: 100
+  optimizer: adam
+  lr: 0.0001
+  weight_decay: 1e-05
+  momentum: 0.99
+  lr_scheduler: cosine
+  min_lr: 1e-06
+  poly_power: 0.9
+
+loss:
+  w_bce: 1.0
+  w_dice: 1.5
+  batch_dice: true

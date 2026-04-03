@@ -1,4 +1,4 @@
-# src/data/dataset_2d.py
+# src/data/dataset_3d.py
 
 from __future__ import annotations
 
@@ -12,8 +12,7 @@ import torch
 from torch.utils.data import Dataset
 
 
-class NeedleDataset2D(Dataset):
-
+class NeedleDataset3D(Dataset):
     def __init__(
         self,
         root: str | Path,
@@ -26,7 +25,6 @@ class NeedleDataset2D(Dataset):
         transform=None,
         return_metadata: bool = True,
     ):
-
         self.root = Path(root)
         self.data_dir = self.root / "data"
 
@@ -44,7 +42,11 @@ class NeedleDataset2D(Dataset):
 
         # Load split definitions if train/val filtering is requested
         if split is not None:
-            splits_file = Path(splits_file) if splits_file is not None else (self.root / "splits.json")
+            splits_file = (
+                Path(splits_file)
+                if splits_file is not None
+                else (self.root / "optimum_patient_splits.json")
+            )
 
             with open(splits_file) as f:
                 splits_data = json.load(f)
@@ -58,70 +60,84 @@ class NeedleDataset2D(Dataset):
         # Collect all h5 files
         all_h5 = sorted(self.data_dir.glob("*.h5"))
 
-        # Filter files based on patient ID in the split
+        # Filter files based on case ID in the split
         if case_ids is not None:
             filtered = []
             for p in all_h5:
-                patient_id = "-".join(p.stem.split("-")[:2])
-                if patient_id in case_ids:
+                case_id = "-".join(p.stem.split("-")[:2])
+                if case_id in case_ids:
                     filtered.append(p)
             all_h5 = filtered
 
         self.samples = all_h5
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.samples)
-
+        
     def __getitem__(self, idx: int) -> Dict[str, Any]:
-
         h5_path = self.samples[idx]
         json_path = h5_path.with_suffix(".json")
 
-        # Load annotated frame and mask
+        # Load full cine, annotation index, and 2D mask
         with h5py.File(h5_path, "r") as f:
             annotation_index = int(f["needle_mask_annotation_index"][()])
-            image = f["cine"][annotation_index].astype(np.float32)
-            mask = f["needle_mask"][:].astype(np.float32)
+            cine = f["cine"][:].astype(np.float32)         # (T, H, W)
+            mask = f["needle_mask"][:].astype(np.float32)  # (H, W)
 
-        # Metadata (optional)
+        # Metadata
         with open(json_path) as f:
             metadata = json.load(f)
 
         # Optional normalization
         if self.normalizer is not None:
-            image = self.normalizer(image)
+            cine = self.normalizer(cine)
 
-        # Optional extractor (resize / patch logic later)
+        # Extract temporal window
         if self.extractor_fn is not None:
             out = self.extractor_fn(
-                image=image,
+                cine=cine,
                 mask=mask,
+                annotation_index=annotation_index,
                 metadata=metadata,
                 **self.extractor_kwargs,
             )
-            image = out["image"]
-            mask = out["mask"]
+            image = out["image"]   # (Z, H, W)
+            mask = out["mask"]     # (H, W)
+            center_index = out.get("center_index", image.shape[0] // 2)
+        else:
+            image = cine
+            mask = mask
+            center_index = annotation_index
 
-        image = np.ascontiguousarray(image, dtype=np.float32)
-        mask = np.ascontiguousarray(mask, dtype=np.float32)
+        image = np.ascontiguousarray(image, dtype=np.float32)  # (Z, H, W)
+        mask = np.ascontiguousarray(mask, dtype=np.float32)    # (H, W)
+
+        Z = image.shape[0]
+
+        # Expand mask across Z so MONAI spatial transforms can operate jointly
+        mask_3d = np.repeat(mask[None, ...], Z, axis=0)  # (Z, H, W)
 
         sample = {
-            "image": image[None, ...],   # (1, H, W)
-            "mask": mask[None, ...],     # (1, H, W)
+            "image": image[None, ...],      # (1, Z, H, W)
+            "mask": mask_3d[None, ...],     # (1, Z, H, W)
         }
 
         if self.return_metadata:
             sample["metadata"] = metadata
             sample["cine_id"] = metadata.get("cine_id", h5_path.stem)
             sample["needle_mask_annotation_index"] = annotation_index
+            sample["center_index"] = center_index
             sample["h5_path"] = str(h5_path)
 
         # Augmentations
         if self.transform is not None:
             sample = self.transform(sample)
 
-        sample["image"] = torch.as_tensor(sample["image"]).float()
-        sample["mask"] = torch.as_tensor(sample["mask"]).float()
+        # Collapse mask back to the annotated slice only
+        sample["mask"] = sample["mask"][:, center_index, :, :]  # (1, H, W)
+
+        sample["image"] = torch.as_tensor(sample["image"]).float()  # (1, Z, H, W)
+        sample["mask"] = torch.as_tensor(sample["mask"]).float()    # (1, H, W)
 
         return sample
-    
+

@@ -1,0 +1,57 @@
+/project/6106383/pirie03/NeedleMicroSeg/src/train/trainer_3d.py:53: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=use_amp):
+Traceback (most recent call last):
+  File "/project/6106383/pirie03/NeedleMicroSeg/scripts/run_train_3d.py", line 421, in <module>
+    main()
+  File "/project/6106383/pirie03/NeedleMicroSeg/scripts/run_train_3d.py", line 320, in main
+    train_metrics = train_one_epoch_3d(
+                    ^^^^^^^^^^^^^^^^^^^
+  File "/project/6106383/pirie03/NeedleMicroSeg/src/train/trainer_3d.py", line 54, in train_one_epoch_3d
+    logits = model(imgs)  # (B, 1, Z, H, W)
+             ^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/monai/networks/nets/dynunet.py", line 269, in forward
+    out = self.skip_layers(x)
+          ^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/monai/networks/nets/dynunet.py", line 48, in forward
+    nextout = self.next_layer(downout)
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/monai/networks/nets/dynunet.py", line 48, in forward
+    nextout = self.next_layer(downout)
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/monai/networks/nets/dynunet.py", line 49, in forward
+    upout = self.upsample(nextout, downout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pirie03/envs/prostate_microseg/lib/python3.11/site-packages/monai/networks/blocks/dynunet_block.py", line 242, in forward
+    out = torch.cat((out, skip), dim=1)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Sizes of tensors must match except in dimension 1. Expected size 10 but got size 9 for tensor number 1 in the list.

@@ -1,0 +1,2 @@
+/project/6106383/pirie03/NeedleMicroSeg/src/train/trainer_3d.py:53: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=use_amp):

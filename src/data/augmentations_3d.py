@@ -6,7 +6,6 @@ from monai.transforms import (
     Compose,
     RandFlipd,
     RandAffined,
-    Rand2DElasticd,
     RandGaussianNoised,
     RandGaussianSmoothd,
     RandShiftIntensityd,
@@ -14,72 +13,36 @@ from monai.transforms import (
     RandAdjustContrastd,
 )
 
-# Maps name groups for documentation / validation
-_SPATIAL_AUGS = {"flip", "translate", "rotate_scale", "elastic"}
+# Spatial dims are (Z, H, W) because tensors are (C, Z, H, W)
+_SPATIAL_AUGS = {"flip", "translate", "rotate_scale"}
 _INTENSITY_AUGS = {"noise", "blur", "shift", "scale", "contrast"}
 
 ALL_AUGS = sorted(_SPATIAL_AUGS | _INTENSITY_AUGS)
 
 
-def build_train_transforms_2d(
+def build_train_transforms_3d(
     spatial_hw: Tuple[int, int] = (256, 256),
     enabled_augs: Optional[List[str]] = None,
     seed: Optional[int] = None,
-    # per-aug probability overrides
     flip_prob: float = 0.5,
     translate_prob: float = 0.15,
     rotate_scale_prob: float = 0.15,
-    elastic_prob: float = 0.10,
     noise_prob: float = 0.10,
     blur_prob: float = 0.20,
     shift_prob: float = 0.15,
     scale_prob: float = 0.15,
     contrast_prob: float = 0.20,
-    # geometric parameter overrides
     translate_range: Tuple[float, float] = (20.0, 20.0),
     rotate_range: float = 0.350,
     scale_range: Tuple[float, float] = (0.2, 0.2),
 ) -> Optional[Compose]:
     """
-    Build a MONAI Compose for training augmentation.
+    Expects sample dicts with:
+      image: (1, Z, H, W)
+      mask:  (1, Z, H, W)
 
-    Expects sample dicts with keys "image" and "mask" as arrays or tensors
-    of shape (1, H, W). Spatial transforms are applied to both image and mask.
-    Intensity transforms are applied to image only.
-
-    Args:
-        spatial_hw:
-            Final (H, W) spatial size for affine-based transforms.
-        enabled_augs:
-            Subset of ALL_AUGS to include. If None or empty, returns None.
-        seed:
-            Optional random seed for reproducibility.
-
-        flip_prob:
-            Probability for each flip transform.
-        translate_prob:
-            Probability of applying translation.
-        rotate_scale_prob:
-            Probability of applying rotation/scale augmentation.
-        elastic_prob:
-            Probability of elastic deformation.
-        noise_prob:
-            Probability of Gaussian noise.
-        blur_prob:
-            Probability of Gaussian smoothing.
-        shift_prob:
-            Probability of intensity shift.
-        scale_prob:
-            Probability of intensity scaling.
-        contrast_prob:
-            Probability of contrast adjustment.
-
-        translate_range:
-            Max translation in pixels as (y, x).
-        rotate_range:
-            Max rotation in radians.
-        scale_range:
-            Max scale perturbation as (y, x).
+    Applies the same spatial transform to image and mask.
+    We keep z augmentation off by setting z-components to 0.
     """
     if not enabled_augs:
         return None
@@ -87,51 +50,42 @@ def build_train_transforms_2d(
     enabled = set(enabled_augs)
     tfms = []
 
-    # Spatial transforms apply to both image and mask
+    # Flip only in H/W, not Z
     if "flip" in enabled:
         tfms += [
-            RandFlipd(keys=("image", "mask"), prob=flip_prob, spatial_axis=1),
-            RandFlipd(keys=("image", "mask"), prob=flip_prob, spatial_axis=0),
+            RandFlipd(keys=("image", "mask"), prob=flip_prob, spatial_axis=1),  # H
+            RandFlipd(keys=("image", "mask"), prob=flip_prob, spatial_axis=2),  # W
         ]
 
+    # Translate only in H/W
     if "translate" in enabled:
         tfms.append(
             RandAffined(
                 keys=("image", "mask"),
                 prob=translate_prob,
-                translate_range=translate_range,
+                translate_range=(0.0, translate_range[0], translate_range[1]),
                 mode=("bilinear", "nearest"),
                 padding_mode="zeros",
-                spatial_size=spatial_hw,
+                spatial_size=(None, spatial_hw[0], spatial_hw[1]),
             )
         )
 
+    # Rotate/scale only in-plane
+    # Rotation here is around the Z axis, so H/W plane rotates together
     if "rotate_scale" in enabled:
         tfms.append(
             RandAffined(
                 keys=("image", "mask"),
                 prob=rotate_scale_prob,
-                rotate_range=(rotate_range,),
-                scale_range=scale_range,
+                rotate_range=(rotate_range, 0.0, 0.0),
+                scale_range=(0.0, scale_range[0], scale_range[1]),
                 mode=("bilinear", "nearest"),
                 padding_mode="zeros",
-                spatial_size=spatial_hw,
+                spatial_size=(None, spatial_hw[0], spatial_hw[1]),
             )
         )
 
-    if "elastic" in enabled:
-        tfms.append(
-            Rand2DElasticd(
-                keys=("image", "mask"),
-                spacing=(32, 32),
-                magnitude_range=(1, 3),
-                prob=elastic_prob,
-                mode=("bilinear", "nearest"),
-                padding_mode="zeros",
-            )
-        )
-
-    # Intensity transforms apply to image only
+    # Intensity transforms on image only
     if "noise" in enabled:
         tfms.append(
             RandGaussianNoised(keys="image", prob=noise_prob, mean=0.0, std=0.03)
@@ -144,6 +98,7 @@ def build_train_transforms_2d(
                 prob=blur_prob,
                 sigma_x=(0.5, 1.0),
                 sigma_y=(0.5, 1.0),
+                sigma_z=(0.0, 0.0),  # no blur across Z
             )
         )
 
@@ -169,6 +124,5 @@ def build_train_transforms_2d(
     return compose
 
 
-def build_val_transforms_2d() -> None:
-    """No augmentation at validation time."""
+def build_val_transforms_3d() -> None:
     return None

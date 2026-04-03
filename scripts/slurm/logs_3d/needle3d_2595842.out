@@ -1,0 +1,15 @@
+job started: Thu Mar 26 05:50:47 PM EDT 2026
+job id: 2595842
+hostname: kn044
+pwd before cd: /home/pirie03/projects/aip-medilab/pirie03/NeedleMicroSeg/scripts/slurm
+pwd after cd: /home/pirie03/projects/aip-medilab/pirie03/NeedleMicroSeg
+activating venv: Thu Mar 26 05:50:47 PM EDT 2026
+venv activated: Thu Mar 26 05:50:47 PM EDT 2026
+Run dir: runs_3d/full_frame_resize_test_2595842
+Device: cuda
+GPU: NVIDIA L40S
+Train config: /home/pirie03/projects/aip-medilab/pirie03/NeedleMicroSeg/configs/train_3d/temporal_window_resized.yaml
+Split ID: kfold_cv_fold-0
+Extractor: temporal_window
+Train samples: 1345 | Val samples: 354
+job finished: Thu Mar 26 05:51:47 PM EDT 2026

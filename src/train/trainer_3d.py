@@ -1,4 +1,4 @@
-# src/train/trainer_2d.py
+# src/train/trainer_3d.py
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import torch.nn as nn
 from src.train.losses import hard_dice_score, soft_dice_score
 
 
-def train_one_epoch_2d(
+def train_one_epoch_3d(
     model: nn.Module,
     train_loader,
     optimizer: torch.optim.Optimizer,
@@ -43,16 +43,20 @@ def train_one_epoch_2d(
             it = iter(train_loader)
             batch = next(it)
 
-        imgs = batch["image"].to(device, non_blocking=pin_memory)
-        lbls = batch["mask"].to(device, non_blocking=pin_memory)
+        imgs = batch["image"].to(device, non_blocking=pin_memory)   # (B, 1, Z, H, W)
+        lbls = batch["mask"].to(device, non_blocking=pin_memory)    # (B, 1, H, W)
 
         use_amp = bool(amp) and (scaler is not None) and torch.cuda.is_available()
 
         optimizer.zero_grad(set_to_none=True)
 
         with torch.cuda.amp.autocast(enabled=use_amp):
-            logits = model(imgs)
-            total_loss, parts = criterion(logits, lbls)
+            logits = model(imgs)  # (B, 1, Z, H, W)
+
+            center_index = imgs.shape[2] // 2
+            logits_center = logits[:, :, center_index, :, :]  # (B, 1, H, W)
+
+            total_loss, parts = criterion(logits_center, lbls)
 
         if use_amp:
             scaler.scale(total_loss).backward()
@@ -66,7 +70,7 @@ def train_one_epoch_2d(
             scheduler.step()
 
         with torch.no_grad():
-            dice_score = hard_dice_score(logits, lbls)
+            dice_score = hard_dice_score(logits_center, lbls)
 
         total_val = float(total_loss.item())
         bce_val = float(parts["bce"].detach().item())
@@ -99,7 +103,7 @@ def train_one_epoch_2d(
 
 
 @torch.no_grad()
-def validate_one_epoch_2d(
+def validate_one_epoch_3d(
     model: nn.Module,
     val_loader,
     criterion,
@@ -118,13 +122,17 @@ def validate_one_epoch_2d(
     n_steps = 0
 
     for step, batch in enumerate(val_loader, start=1):
-        imgs = batch["image"].to(device, non_blocking=pin_memory)
-        lbls = batch["mask"].to(device, non_blocking=pin_memory)
+        imgs = batch["image"].to(device, non_blocking=pin_memory)   # (B, 1, Z, H, W)
+        lbls = batch["mask"].to(device, non_blocking=pin_memory)    # (B, 1, H, W)
 
-        logits = model(imgs)
-        total_loss, parts = criterion(logits, lbls)
-        dice_score = hard_dice_score(logits, lbls)
-        soft_dice = soft_dice_score(logits, lbls)
+        logits = model(imgs)  # (B, 1, Z, H, W)
+
+        center_index = imgs.shape[2] // 2
+        logits_center = logits[:, :, center_index, :, :]  # (B, 1, H, W)
+
+        total_loss, parts = criterion(logits_center, lbls)
+        dice_score = hard_dice_score(logits_center, lbls)
+        soft_dice = soft_dice_score(logits_center, lbls)
 
         total_sum += float(total_loss.item())
         bce_sum += float(parts["bce"].detach().item())

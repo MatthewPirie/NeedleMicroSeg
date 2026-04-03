@@ -28,6 +28,7 @@ python scripts/run_train_2d.py \
   --runs_dir runs_2d \
   --run_name "full_frame_resize_test_${SLURM_JOB_ID}" \
   --splits_file "/home/pirie03/projects/aip-medilab/pirie03/NeedleMicroSeg/dataset/multicenter_custom_split.json" \
+  --model_variant "small" \
   --num_workers 8
 
 echo "job finished: $(date)"

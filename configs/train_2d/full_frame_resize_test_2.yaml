@@ -1,0 +1,32 @@
+extractor:
+  name: full_frame_resize
+  kwargs:
+    out_hw: [512, 512]
+
+normalization:
+  name: zscore_per_image
+
+augmentations:
+  enabled: [translate, flip]
+  kwargs: {}
+
+data:
+  split_id: multicenter_custom
+
+train:
+  batch_size: 8
+  epochs: 150
+  steps_per_epoch: 250
+  log_every: 50
+  optimizer: adam
+  lr: 0.0001
+  weight_decay: 1e-05
+  momentum: 0.99
+  lr_scheduler: cosine
+  min_lr: 1e-06
+  poly_power: 0.9
+
+loss:
+  w_bce: 1.0
+  w_dice: 1.5
+  batch_dice: true
