@@ -24,10 +24,9 @@ echo "venv activated: $(date)"
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
 python scripts/run_train_2d.py \
-  --train_config /home/pirie03/projects/aip-medilab/pirie03/NeedleMicroSeg/configs/train_2d/full_frame_resize_test_2.yaml \
-  --runs_dir runs_2d \
+  --train_config /home/pirie03/projects/aip-medilab/pirie03/NeedleMicroSeg/configs/train_2d/full_frame_resize_test.yaml \
+  --runs_dir runs/runs_2d \
   --run_name "full_frame_resize_test_${SLURM_JOB_ID}" \
-  --splits_file "/home/pirie03/projects/aip-medilab/pirie03/NeedleMicroSeg/dataset/multicenter_custom_split.json" \
   --num_workers 8
 
 echo "job finished: $(date)"

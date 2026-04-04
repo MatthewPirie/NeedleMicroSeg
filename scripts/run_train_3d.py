@@ -1,4 +1,4 @@
-# scripts/run_train_3d.py
+# NeedleMicroSeg/scripts/run_train_3d.py
 
 from __future__ import annotations
 
@@ -134,7 +134,6 @@ def main() -> None:
 
     enabled_augs = list(augmentations_cfg.get("enabled", []))
     aug_kwargs = dict(augmentations_cfg.get("kwargs", {}))
-
     split_id = str(data_cfg.get("split_id", "kfold_cv_fold-0"))
 
     batch_size = int(train_cfg.get("batch_size", 8))
@@ -407,10 +406,10 @@ def main() -> None:
         model=model,
         val_ds=val_ds,
         device=device,
-        save_dir=run_dir / "val_panels",
-        n_samples=3,
-        context_radius=2,
-        prefix="final",
+        save_dir=run_dir / "val_predictions_best",
+        n_samples=None,   # all validation samples
+        prefix="best",
+        csv_name="val_dice_summary.csv",
     )
 
     print("Training completed.", flush=True)

@@ -1,4 +1,4 @@
-# scripts/run_infer_2d.py
+# NeedleMicroSeg/scripts/run_infer_2d.py
 
 from __future__ import annotations
 

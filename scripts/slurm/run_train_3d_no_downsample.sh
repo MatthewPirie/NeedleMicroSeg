@@ -26,9 +26,8 @@ export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 python scripts/run_train_3d.py \
   --train_config /home/pirie03/projects/aip-medilab/pirie03/NeedleMicroSeg/configs/train_3d/temporal_window_resized.yaml \
   --runs_dir runs/runs_3d \
-  --run_name "base_${SLURM_JOB_ID}" \
-  --model_variant "base" \
+  --run_name "base_no_z_downsample_${SLURM_JOB_ID}" \
+  --model_variant "base_no_z_downsample" \
   --num_workers 8 \
-  --split_id "${SPLIT_ID}"
 
 echo "job finished: $(date)"

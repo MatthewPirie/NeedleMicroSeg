@@ -1,4 +1,4 @@
-# scripts/run_train_2d.py
+# NeedleMicroSeg/scripts/run_train_2d.py
 
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ from src.utils.helper_functions import (
     _save_checkpoint,
     _set_seed,
 )
-from src.utils.visualization import save_val_panels
+from src.utils.visualization_3d import save_val_panels_2d
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -385,12 +385,12 @@ def main() -> None:
     else:
         print("Best checkpoint not found, using current in-memory model for validation panels.", flush=True)
 
-    save_val_panels(
+    save_val_panels_2d(
         model=model,
         val_ds=val_ds,
         device=device,
         save_dir=run_dir / "val_panels",
-        n_samples=3,
+        n_samples=None,
         prefix="final",
     )
 
